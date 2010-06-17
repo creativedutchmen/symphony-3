@@ -28,18 +28,13 @@
 			$this->position = 0;
 
 			//As all fields are inside an extension, and only the active extensions "count", this is the only way.
-			foreach(new ExtensionIterator as $extension){
+			foreach(new ExtensionIterator(ExtensionIterator::FLAG_STATUS, Extension::STATUS_ENABLED) as $extension){
 				
 				//taken from content.systemextensions.php, is there a neater way?
 				$pathname = Extension::getPathFromClass(get_class($extension));
-				$handle = Extension::getHandleFromPath($pathname);
-				$status = Extension::status($handle);
-				
-				if($status == 'enabled'){
-					if(is_dir($pathname . '/fields')){
-						foreach(new FieldFilterIterator($pathname . '/fields') as $file){
-							$this->fields[] = $file->getPathName();
-						}
+				if(is_dir($pathname . '/fields')){
+					foreach(new FieldFilterIterator($pathname . '/fields') as $file){
+						$this->fields[] = $file->getPathName();
 					}
 				}
 			}

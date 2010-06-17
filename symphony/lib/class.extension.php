@@ -326,7 +326,7 @@
 					if(!is_null($flag) && !is_null($value)){
 						switch($flag){
 							case self::FLAG_STATUS:
-								if(!in_array(Extension::status($d->getFileName()), (array)$value)) continue 2;
+								if(Extension::status(Extension::getHandleFromPath($d->getPathName())) != $value) continue 2;
 								break;
 								
 							case self::FLAG_TYPE:
