@@ -30,7 +30,7 @@
 		return call_user_func("{$classname}::instance");
 	}
 
-	$handle = (isset($_GET['mode']) && strtolower($_GET['mode']) == 'administration' 
+	$handle = (isset($_GET['symphony-renderer']) && strtolower($_GET['symphony-renderer']) == 'administration' 
         ? 'administration' 
         : 'frontend');		
 	

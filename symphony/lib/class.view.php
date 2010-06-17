@@ -471,8 +471,6 @@
 				}
 			}
 			
-			print_r($ordered_list);
-			
 			## 2. Iterate over the remaining DS's. Find if all their dependencies are
 			##    in the $datasources_ordered array. Keep iterating until all DS's are in that list
 			##	  or there are circular dependencies (list doesn't change between iterations of the while loop)
