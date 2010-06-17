@@ -956,5 +956,9 @@
 			return preg_replace('/(?<!\\\\)\\\\,/', ',', $string);
 		}
 		
+		public static function fixWinPath($filename){
+			return str_replace('\\','/',$filename);
+		}
+		
 
 	}

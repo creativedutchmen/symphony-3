@@ -256,6 +256,9 @@
 		-------------------------------------------------------------------------*/
 
 		public static function load($pathname){
+		
+			$pathname = General::fixWinPath($pathname);
+			
 			if(!is_array(self::$loaded)){
 				self::$loaded = array();
 			}
@@ -266,6 +269,9 @@
 				);
 			}
 
+			//This would require some additional checks to see if the class is already declared.
+			//Now having two datasources with the same classname in different folders (extensionds, data-sources) makes symphony return a fatal error.
+			//Also makes me wonder if the pathname index is a good choice. I would prefer to use the classname instead. (creativedutchmen)
 			if(!isset(self::$loaded[$pathname])){
 				self::$loaded[$pathname] = require($pathname);
 			}

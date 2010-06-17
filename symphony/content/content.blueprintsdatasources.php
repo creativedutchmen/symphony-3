@@ -17,7 +17,8 @@
 		protected $type;
 		protected $types;
 
-		protected static $_loaded_views;
+		//prevents foreach errors.
+		protected static $_loaded_views = array();
 
 		public function __construct(){
 			parent::__construct();
@@ -129,7 +130,7 @@
 
 					// Used By
 					$fragment_views = $this->createDocumentFragment();
-
+					
 					foreach(self::$_loaded_views as $view) {
 						if(is_array($view['data-sources']) && in_array($handle, $view['data-sources'])) {
 							if($fragment_views->hasChildNodes()) $fragment_views->appendChild(new DOMText(', '));

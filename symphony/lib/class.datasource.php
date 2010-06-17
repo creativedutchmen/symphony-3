@@ -89,7 +89,7 @@
 		abstract public function render(Register $ParameterOutput);
 
 		public static function getHandleFromFilename($filename){
-			return preg_replace('/(.php$|\/.*\/)/i', NULL, $filename);
+			return basename($filename, ".php");
 		}
 
 		public function &about(){
@@ -101,6 +101,9 @@
 		}
 
 		public static function load($pathname){
+		
+			$pathname = General::fixWinPath($pathname);
+		
 			if(!is_array(self::$_loaded)){
 				self::$_loaded = array();
 			}

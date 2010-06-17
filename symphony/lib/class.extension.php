@@ -175,6 +175,7 @@
 		}
 		
 		public static function getHandleFromPath($pathname){
+			$pathname = General::fixWinPath($pathname);
 			return str_replace(EXTENSIONS . '/', NULL, $pathname);
 		}
 		
@@ -240,7 +241,11 @@
 		}
 		
 		public static function load($handle){
-			
+		
+			//temp. fix, sometimes the handle contains the full path. (fix bugs at the source, I know..)
+			//(creativedutchmen)
+			$handle = basename($handle, '.php');
+		
 			$pathname = EXTENSIONS . "/{$handle}";
 			
 			if(!is_array(self::$loaded_extensions)){
