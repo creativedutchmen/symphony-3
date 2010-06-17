@@ -386,12 +386,18 @@
 		}
 
 		public static function in_array_all($needles, $haystack){
+		
+			if(is_array($needles)){
 
-			foreach($needles as $n){
-				if(!in_array($n, $haystack)) return false;
+				foreach($needles as $n){
+					if(!in_array($n, $haystack)) return false;
+				}
+				return true;
 			}
-
-			return true;
+			else{
+				return false;
+			}
+			
 		}
 
 

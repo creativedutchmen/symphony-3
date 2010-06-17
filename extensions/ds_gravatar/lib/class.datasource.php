@@ -199,6 +199,9 @@
 				if (empty($address)) continue;
 				
 				$hash = md5($address);
+				if(!class_exists('URLWriter')){
+					$a = require(LIB . 'class.urlwriter.php');
+				}
 				$url = new URLWriter('http://www.gravatar.com/avatar/' . $hash, $params);
 				
 				$element = $document->createElement('avatar');

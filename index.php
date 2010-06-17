@@ -30,9 +30,9 @@
 		return call_user_func("{$classname}::instance");
 	}
 
-	$handle = (isset($_GET['symphony-renderer'])
-		? $_GET['symphony-renderer']
-		: 'frontend');
+	$handle = (isset($_GET['mode']) && strtolower($_GET['mode']) == 'administration' 
+        ? 'administration' 
+        : 'frontend');		
 	
 	$output = renderer($handle)->display(getCurrentPage());
 

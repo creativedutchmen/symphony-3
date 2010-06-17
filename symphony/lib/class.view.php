@@ -456,14 +456,22 @@
 
 			## 1. First do a cleanup of each dependency list, removing non-existant DS's and find 
 			##    the ones that have no dependencies, removing them from the list
-			foreach($dependency_list as $handle => $dependencies){	
-				$dependency_list[$handle] = array_intersect($all_dependencies, $dependencies);
+			
+			foreach($dependency_list as $handle => $dependencies){
+				if(is_array($dependecies)){
+					$dependency_list[$handle] = array_intersect($all_dependencies, $dependencies);
 
-				if(empty($dependency_list[$handle])){ 
-					unset($dependency_list[$handle]);
+					if(empty($dependency_list[$handle])){ 
+						unset($dependency_list[$handle]);
+						$ordered_list[] = $handle;
+					}
+				}
+				else{
 					$ordered_list[] = $handle;
 				}
 			}
+			
+			print_r($ordered_list);
 			
 			## 2. Iterate over the remaining DS's. Find if all their dependencies are
 			##    in the $datasources_ordered array. Keep iterating until all DS's are in that list
