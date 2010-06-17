@@ -27,13 +27,31 @@
 			$this->fields = array();
 			$this->position = 0;
 
+			//As all fields are inside an extension, and only the active extensions "count", this is the only way.
+			foreach(new ExtensionIterator as $extension){
+				
+				//taken from content.systemextensions.php, is there a neater way?
+				$pathname = Extension::getPathFromClass(get_class($extension));
+				$handle = Extension::getHandleFromPath($pathname);
+				$status = Extension::status($handle);
+				
+				if($status == 'enabled'){
+					if(is_dir($pathname . '/fields')){
+						foreach(new FieldFilterIterator($pathname . '/fields') as $file){
+							$this->fields[] = $file->getPathName();
+						}
+					}
+				}
+			}
+
+			/*
 			foreach(new DirectoryIterator(EXTENSIONS) as $dir){
 				if(!$dir->isDir() || $dir->isDot() || !is_dir($dir->getPathname() . '/fields')) continue;
 
 				foreach(new FieldFilterIterator($dir->getPathname() . '/fields') as $file){
 					$this->fields[] = $file->getPathname();
 				}
-			}
+			}*/
 
 		}
 

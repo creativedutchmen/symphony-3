@@ -862,6 +862,7 @@
 			$fields = $this->section->fields;
 			$types = array();
 
+			//should be replaced by the enabled fields. not all fields. 
 			foreach (new FieldIterator as $pathname){
 				$type = preg_replace(array('/^field\./', '/\.php$/'), NULL, basename($pathname));
 				$types[$type] = Field::load($pathname);
