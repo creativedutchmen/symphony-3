@@ -269,9 +269,6 @@
 		public static function load($pathname){
 			
 			$pathname = General::fixWinPath($pathname);
-			if($pathname == '/field.textbox.php'){
-				debug_print_backtrace();
-			}
 			
 			if(!is_array(self::$loaded)){
 				self::$loaded = array();
