@@ -30,7 +30,7 @@
 				self::$datasources[] = $file->getPathname();
 			}
 			
-			$extensions = new ExtensionIterator(ExtensionIterator::FLAG_STATUS, Extension::STATUS_ENABLED);
+			$extensions = new ExtensionIterator(array(ExtensionIterator::FLAG_STATUS => Extension::STATUS_ENABLED));
 			
 			foreach ($extensions as $extension) {
 				$path = Extension::getPathFromClass(get_class($extension));

@@ -32,7 +32,7 @@
 				self::$sections[] = $file->getPathname();
 			}
 			
-			$extensions = new ExtensionIterator(ExtensionIterator::FLAG_STATUS, Extension::STATUS_ENABLED);
+			$extensions = new ExtensionIterator(Array(ExtensionIterator::FLAG_STATUS => Extension::STATUS_ENABLED));
 			
 			foreach ($extensions as $extension) {
 				$path = Extension::getPathFromClass(get_class($extension));
@@ -242,16 +242,16 @@
 			foreach($doc as $name => $value){
 				if($name == 'fields' && isset($value->field)){
 					foreach($value->field as $field){
-
+						
 						try{
+							
 							$section->appendField(
 								Field::loadFromXMLDefinition($field)
 							);
 						}
 
 						catch(Exception $e){
-							// Couldnt find the field. Ignore it for now
-							// TODO: Might need to more than just ignore it
+
 						}
 
 					}

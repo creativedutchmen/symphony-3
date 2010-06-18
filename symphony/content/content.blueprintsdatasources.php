@@ -29,7 +29,7 @@
 			$this->datasource = $this->handle = $this->status = $this->type = NULL;
 			$this->types = array();
 			
-			foreach (new ExtensionIterator(ExtensionIterator::FLAG_TYPE, array('Data Source')) as $extension) {
+			foreach (new ExtensionIterator(array(ExtensionIterator::FLAG_STATUS => Extension::STATUS_ENABLED, ExtensionIterator::FLAG_TYPE => array('Data Source'))) as $extension) {
 				$path = Extension::getPathFromClass(get_class($extension));
 				$handle = Extension::getHandleFromPath($path);
 				

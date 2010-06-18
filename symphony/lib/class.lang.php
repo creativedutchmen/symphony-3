@@ -150,7 +150,7 @@
 			}
 
 			// Load localisation files for extensions
-			foreach(new ExtensionIterator(ExtensionIterator::FLAG_STATUS, Extension::STATUS_ENABLED) as $extension){
+			foreach(new ExtensionIterator(array(ExtensionIterator::FLAG_STATUS => Extension::STATUS_ENABLED)) as $extension){
 				$path = Extension::getPathFromClass(get_class($extension)) . '/lang/lang.%s.php';
 				if(file_exists(sprintf($path, Symphony::lang()))){
 					Lang::add($path, Symphony::lang());

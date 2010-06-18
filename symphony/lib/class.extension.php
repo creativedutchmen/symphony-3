@@ -301,45 +301,64 @@
 		const FLAG_STATUS = 'status';
 		const FLAG_TYPE = 'type';
 		
+		//pre defined types
+		const DATASOURCE	= 'Data source';
+		const EVENT			= 'Event';
+		const FIELD			= 'Field';
+		const CORE			= 'Core';
+		
 		private $position;
 		private $extensions;
 		static private $extensions_by_flag;
 
-		public function __construct($flag=NULL, $value=NULL){
+		public function __construct($filter = array()){
 			$this->position = 0;
 			$key = null;
 			
-			if ($flag != null and $value != null) {
-				$key = "{$flag}.{$value}";
-			}
+			$this->extensions = array();
 			
-			if (!(isset(self::$extensions_by_flag[$key]))) {
-				if (!(is_array(self::$extensions_by_flag))) {
-					self::$extensions_by_flag = array();
-				}
+			//all caching is removed to enable filtering for each call.
+			//I noticed most filter pairs are only used once or twice, so in my opinion it's not worth the extra memory/code.
+			
+			foreach(new DirectoryIterator(EXTENSIONS) as $d){
+				if(!$d->isDir() || $d->isDot() || !file_exists($d->getPathname() . '/extension.driver.php')) continue;
 				
-				foreach(new DirectoryIterator(EXTENSIONS) as $d){
-					if(!$d->isDir() || $d->isDot() || !file_exists($d->getPathname() . '/extension.driver.php')) continue;
-					
-					$extension = Extension::load($d->getFileName());
-					
-					if(!is_null($flag) && !is_null($value)){
+				$extension = Extension::load($d->getFileName());
+				
+				if(is_array($filter) && !empty($filter)){
+					foreach($filter as $flag => $value){
 						switch($flag){
 							case self::FLAG_STATUS:
-								if(Extension::status(Extension::getHandleFromPath($d->getPathName())) != $value) continue 2;
+								if(Extension::status(Extension::getHandleFromPath($d->getPathName())) != $value) continue 3;
 								break;
 								
 							case self::FLAG_TYPE:
-								if(!isset($extension->about()->type) || (bool)array_intersect((array)$value, (array)$extension->about()->type) === false) continue 2;
+								switch($value){
+									case self::DATASOURCE:
+										if(!is_dir($d->getPathName() . '/data-sources')) continue 4;
+									break;
+									case self::EVENT:
+										if(!is_dir($d->getPathName() . '/events')) continue 4;
+									break;
+									case self::FIELD:
+										if(!is_dir($d->getPathName() . '/fields')) continue 4;
+									break;
+									default:
+										if(!isset($extension->about()->type) || (bool)array_intersect((array)$value, (array)$extension->about()->type) === false) continue 4;
+									break;
+								}
 								break;
+							
 						}
+						
 					}
-					
-					self::$extensions_by_flag[$key][] = $extension;
+					$this->extensions[] = $extension;				
 				}
+				//no filter specified, return all results
+				else{
+					$this->extensions[] = $extension;
+				}				
 			}
-			
-			$this->extensions = self::$extensions_by_flag[$key];
 		}
 
 		public function length(){

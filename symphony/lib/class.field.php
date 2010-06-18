@@ -10,7 +10,7 @@
 		}
 
 		public function accept(){
-			if($this->isDir() == false && preg_match('/^field\..+\.php$/i', $this->getFilename())){
+			if($this->isDir() == false && preg_match('/^field\..+\.php$/i', General::fixWinPath($this->getFilename()))){
 				return true;
 			}
 			return false;
@@ -26,16 +26,14 @@
 
 			$this->fields = array();
 			$this->position = 0;
-
-			//As all fields are inside an extension, and only the active extensions "count", this is the only way.
-			foreach(new ExtensionIterator(ExtensionIterator::FLAG_STATUS, Extension::STATUS_ENABLED) as $extension){
-				
+			
+			$iterator = new ExtensionIterator(array(ExtensionIterator::FLAG_STATUS => Extension::STATUS_ENABLED, ExtensionIterator::FLAG_TYPE => ExtensionIterator::FIELD));
+			//Get all active extension that contain a field.
+			foreach($iterator as $extension){
 				//taken from content.systemextensions.php, is there a neater way?
 				$pathname = Extension::getPathFromClass(get_class($extension));
-				if(is_dir($pathname . '/fields')){
-					foreach(new FieldFilterIterator($pathname . '/fields') as $file){
-						$this->fields[] = $file->getPathName();
-					}
+				foreach(new FieldFilterIterator($pathname . '/fields') as $file){
+					$this->fields[] = Field::load($file->getPathName());
 				}
 			}
 
@@ -59,7 +57,7 @@
 		}
 
 		public function current(){
-			return $this->fields[$this->position]; //Datasource::loadFromPath($this->events[$this->position]);
+			return $this->fields[$this->position]; //should be a field, not a path. (consistency)
 		}
 
 		public function key(){
@@ -269,8 +267,11 @@
 		-------------------------------------------------------------------------*/
 
 		public static function load($pathname){
-		
+			
 			$pathname = General::fixWinPath($pathname);
+			if($pathname == '/field.textbox.php'){
+				debug_print_backtrace();
+			}
 			
 			if(!is_array(self::$loaded)){
 				self::$loaded = array();
@@ -278,7 +279,7 @@
 
 			if(!is_file($pathname)){
 		        throw new FieldException(
-					__('Could not find Field <code>%s</code>. If the Field was provided by an Extension, ensure that it is installed, and enabled.', array(basename($pathname)))
+					__('Could not find Field <code>%s</code>. If the Field was provided by an Extension, ensure that it is installed, and enabled.', array($pathname))
 				);
 			}
 
@@ -296,14 +297,13 @@
 		}
 
 		public static function loadFromType($type){
-			return self::load(self::__find($type) . "/field.{$type}.php");
+			return self::__find($type);
 		}
 
 		public static function loadFromXMLDefinition(SimpleXMLElement $xml){
 			if(!isset($xml->type)){
 				throw new FieldException('Section XML contains fields with no type specified.');
 			}
-
 			$field = self::loadFromType((string)$xml->type);
 			$field->loadSettingsFromSimpleXMLObject($xml);
 
@@ -319,11 +319,9 @@
 	//				if(is_file(EXTENSIONS . "/{$e}/fields/field.{$type}.php")) return EXTENSIONS . "/{$e}/fields";
 	//			}
 	//		}
-			
 			foreach(new FieldIterator as $e){
-				$path = dirname(General::fixWinPath($e));
-				if(is_file("{$path}/field.{$type}.php")){
-					return "{$path}";
+				if($e->type == $type){
+					return $e;
 				}
 			}
 		    return false;
